@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nightly Inventory Journal</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px;
+        background-color: #121212;
+        color: #f2f2f2;
+        font-family: Arial, sans-serif;
+    }
+
+    .container {
+        max-width: 950px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #aaaaaa;
+        margin-bottom: 30px;
+    }
+
+    .field {
+        margin-bottom: 28px;
+    }
+
+    label {
+        display: block;
+        font-size: 1.05rem;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    textarea {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #333;
+        background-color: #1d1d1d;
+        color: white;
+        font-size: 1rem;
+    }
+
+    input[type="date"] {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #333;
+        background-color: #1d1d1d;
+        color: white;
+        font-size: 1rem;
+    }
+
+    button {
+        width: 100%;
+        padding: 16px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 20px;
+    }
+
+    button:hover {
+        background-color: #43a047;
+    }
+
+    .footer {
+        text-align: center;
+        color: #777;
+        margin-top: 25px;
+        font-size: 0.9rem;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Nightly Inventory Journal</h1>
+    <div class="subtitle">
+        Daily reflection and personal inventory
+    </div>
+
+    <div class="field">
+        <label for="journalDate">Date</label>
+        <input type="date" id="journalDate">
+    </div>
+
+    <div id="questions"></div>
+
+    <button onclick="saveJournal()">
+        Save Journal as TXT
+    </button>
+
+    <div class="footer">
+        Local-only • Nothing uploaded anywhere
+    </div>
+
+</div>
+
+<script>
+
+const questions = [
+    "Was I resentful today?",
+    "Was I selfish today?",
+    "Was I dishonest or delusional?",
+    "Was I afraid today?",
+    "Do I owe anyone an apology?",
+    "Did I keep anything to myself that should be shared with another person?",
+    "Was I kind toward all? (Actions)",
+    "Was I loving towards all? (Thoughts)",
+    "What could I have done better?",
+    "What percentage was I thinking about God, myself, and others?",
+    "Was I thinking about what I could do for others packing into the stream of life?",
+    "What character defects did I exhibit today?",
+    "What are some corrective measures for tomorrow?",
+    "What are 3 things you're grateful for?"
+];
+
+const questionContainer = document.getElementById("questions");
+
+questions.forEach((question, index) => {
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "field";
+
+    const label = document.createElement("label");
+    label.innerText = `${index + 1}. ${question}`;
+
+    const textarea = document.createElement("textarea");
+    textarea.id = `q${index}`;
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(textarea);
+
+    questionContainer.appendChild(wrapper);
+});
+
+const dateInput = document.getElementById("journalDate");
+
+const today = new Date();
+
+const yyyy = today.getFullYear();
+const mm = String(today.getMonth() + 1).padStart(2, '0');
+const dd = String(today.getDate()).padStart(2, '0');
+
+dateInput.value = `${yyyy}-${mm}-${dd}`;
+
+function saveJournal() {
+
+    const selectedDate = dateInput.value;
+
+    let output = "";
+    output += "Nightly Inventory Journal\n";
+    output += "=========================\n\n";
+    output += `Date: ${selectedDate}\n\n`;
+
+    questions.forEach((question, index) => {
+
+        const answer = document.getElementById(`q${index}`).value;
+
+        output += `${index + 1}. ${question}\n`;
+        output += `${answer}\n\n`;
+    });
+
+    const blob = new Blob([output], {
+        type: "text/plain"
+    });
+
+    const link = document.createElement("a");
+
+    link.href = URL.createObjectURL(blob);
+
+    link.download = `nightly-inventory-${selectedDate}.txt`;
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+}
+
+</script>
+
+</body>
+</html>
